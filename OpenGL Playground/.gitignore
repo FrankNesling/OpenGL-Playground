@@ -1,1 +1,4 @@
 *.txt
+
+*.vcxproj
+*.vcxproj.filters
