@@ -22,7 +22,14 @@ const char* vertexShaderSource = "#version 330 core\n"
     "}\0";
 
 // fragment shader
-const char* fragmentShaderSource = "#version 330 core\n"
+const char* fragmentShaderSourceYellow = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+    "}\n\0";
+
+const char* fragmentShaderSourceOrange = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
@@ -77,22 +84,35 @@ int main()
     }
 
     // fragment shader
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    unsigned int fragmentShaderOrange;
+    fragmentShaderOrange = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShaderOrange, 1, &fragmentShaderSourceOrange, NULL);
+    glCompileShader(fragmentShaderOrange);
+
+    unsigned int fragmentShaderYellow;
+    fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShaderYellow, 1, &fragmentShaderSourceYellow, NULL);
+    glCompileShader(fragmentShaderYellow);
 
     // linking - shader program
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
+    unsigned int shaderPrograms[2];
+    shaderPrograms[0] = glCreateProgram();
 
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    glAttachShader(shaderPrograms[0], vertexShader);
+    glAttachShader(shaderPrograms[0], fragmentShaderOrange);
+    glLinkProgram(shaderPrograms[0]);
+
+    shaderPrograms[1] = glCreateProgram();
+
+    glAttachShader(shaderPrograms[1], vertexShader);
+    glAttachShader(shaderPrograms[1], fragmentShaderYellow);
+    glLinkProgram(shaderPrograms[1]);
 
 
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(fragmentShaderOrange);
+    glDeleteShader(fragmentShaderYellow);
+
 
     // rectangle
     float verticesRec[] = {
@@ -168,7 +188,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // polygons
-        glUseProgram(shaderProgram);
+        glUseProgram(shaderPrograms[0]);
 
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // wireframe mode
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -176,6 +196,8 @@ int main()
 
         glBindVertexArray(VAO1);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glUseProgram(shaderPrograms[1]);
 
         glBindVertexArray(VAO2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
