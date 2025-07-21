@@ -46,68 +46,34 @@ int main()
     // shader
     Shader shader("vertexshader.vxs", "fragmentshader.frs");
 
-    // rectangle
-    float verticesRec[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
-    };
-    unsigned int indices[] = {
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };
-
     // triangle
     float verticesTri1[] = {
-        -1.0f, -1.0f, 0.0f,
-         0.0f, -1.0f, 0.0f,
-        -0.5f,  0.0f, 0.0f
+        // positions         // colors
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
     };
-
-    float verticesTri2[] = {
-         0.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-         0.5f, 0.0f, 0.0f
-    };
-
-
-    // element buffer object
-    //unsigned int EBO;
-    //glGenBuffers(1, &EBO);
-
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // vertex buffer object
     unsigned int VBO1;
     glGenBuffers(1, &VBO1);
 
-    unsigned int VBO2;
-    glGenBuffers(1, &VBO2);
 
     // vertex array object
     unsigned int VAO1;
     glGenVertexArrays(1, &VAO1);
 
-    unsigned int VAO2;
-    glGenVertexArrays(1, &VAO2);
 
     // binding VAO1
     glBindVertexArray(VAO1);
     glBindBuffer(GL_ARRAY_BUFFER, VBO1);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTri1), verticesTri1, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // binding VAO2
-    glBindVertexArray(VAO2);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTri2), verticesTri2, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -120,15 +86,9 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // polygons
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        shader.setVector4("uniformColor", 0.0f, greenValue, 0.0f, 1.0f);
         shader.use();
 
         glBindVertexArray(VAO1);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glBindVertexArray(VAO2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // frame
