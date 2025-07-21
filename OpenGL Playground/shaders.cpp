@@ -1,43 +1,21 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <shader.h>
 
-void framebuffer_size_callback1(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void processInput1(GLFWwindow* window)
+void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
-// vertex shader
-const char* vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
 
-// fragment shader
-const char* fragmentShaderSourceYellow = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-    "}\n\0";
-
-const char* fragmentShaderSourceOrange = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
-
-
-int main1()
+int main()
 {
     // GLFW / OpenGL Init
     glfwInit();
@@ -63,56 +41,10 @@ int main1()
     }
 
     glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback1);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // vertex shader
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    // check vertex shader compilation success
-    int  success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    // fragment shader
-    unsigned int fragmentShaderOrange;
-    fragmentShaderOrange = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShaderOrange, 1, &fragmentShaderSourceOrange, NULL);
-    glCompileShader(fragmentShaderOrange);
-
-    unsigned int fragmentShaderYellow;
-    fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShaderYellow, 1, &fragmentShaderSourceYellow, NULL);
-    glCompileShader(fragmentShaderYellow);
-
-    // linking - shader program
-    unsigned int shaderPrograms[2];
-    shaderPrograms[0] = glCreateProgram();
-
-    glAttachShader(shaderPrograms[0], vertexShader);
-    glAttachShader(shaderPrograms[0], fragmentShaderOrange);
-    glLinkProgram(shaderPrograms[0]);
-
-    shaderPrograms[1] = glCreateProgram();
-
-    glAttachShader(shaderPrograms[1], vertexShader);
-    glAttachShader(shaderPrograms[1], fragmentShaderYellow);
-    glLinkProgram(shaderPrograms[1]);
-
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShaderOrange);
-    glDeleteShader(fragmentShaderYellow);
-
+    // shader
+    Shader shader("vertexshader.vxs", "fragmentshader.frs");
 
     // rectangle
     float verticesRec[] = {
@@ -181,23 +113,20 @@ int main1()
     while (!glfwWindowShouldClose(window))
     {
         // input
-        processInput1(window);
+        processInput(window);
 
         // rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // polygons
-        glUseProgram(shaderPrograms[0]);
-
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // wireframe mode
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+        shader.setVector4("uniformColor", 0.0f, greenValue, 0.0f, 1.0f);
+        shader.use();
 
         glBindVertexArray(VAO1);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glUseProgram(shaderPrograms[1]);
 
         glBindVertexArray(VAO2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
