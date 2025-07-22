@@ -44,7 +44,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // shader
-    Shader shader("upsidedown.vxs", "fragmentshader.frs");
+    Shader shader("offsetHorizontically.vxs", "fragmentshader.frs");
 
     // triangle
     float verticesTri1[] = {
@@ -75,6 +75,8 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -86,6 +88,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // polygons
+        shader.setFloat("offsetHorizontically", 0.5f);
         shader.use();
 
         glBindVertexArray(VAO1);
