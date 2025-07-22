@@ -44,7 +44,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // shader
-    Shader shader("vertexshader.vxs", "fragmentshader.frs");
+    Shader shader("upsidedown.vxs", "fragmentshader.frs");
 
     // triangle
     float verticesTri1[] = {
