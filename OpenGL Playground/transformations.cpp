@@ -134,6 +134,9 @@ int transformations()
     // render loop
     while (!glfwWindowShouldClose(window))
     {
+        // variables
+        float currentTime = (float) glfwGetTime();
+        
         // input
         processInput(window);
 
@@ -151,7 +154,7 @@ int transformations()
         glm::mat4 trans = glm::mat4(1.0f);
         //trans = glm::rotate(trans, (float)glfwGetTime() * 10, glm::vec3(0.0f, 0.0f, 1.0f));
         trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans = glm::rotate(trans, currentTime, glm::vec3(0.0f, 0.0f, 1.0f));
 
         unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -159,6 +162,17 @@ int transformations()
         // render container
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+        // second container
+        trans = glm::mat4(1.0f);
+        trans = glm::scale(trans, glm::vec3(abs(sin(currentTime)), abs(sin(currentTime)), 0.0f));
+        trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+        // render container
+        glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
