@@ -7,6 +7,7 @@ int shaders();
 int window();
 int triangle();
 int transformations();
+int going3d();
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -22,5 +23,5 @@ void processInput(GLFWwindow* window)
 
 
 int main() {
-    transformations();
+    going3d();
 }
