@@ -2,20 +2,9 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <shader.h>
+#include <helper.h>
 
-void framebuffer_size_callback4(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput4(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-
-int main4()
+int shaders()
 {
     // GLFW / OpenGL Init
     glfwInit();
@@ -41,7 +30,7 @@ int main4()
     }
 
     glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback4);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // shader
     Shader shader("vertexshader.vxs", "fragmentshader.frs");
@@ -81,7 +70,7 @@ int main4()
     while (!glfwWindowShouldClose(window))
     {
         // input
-        processInput4(window);
+        processInput(window);
 
         // rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

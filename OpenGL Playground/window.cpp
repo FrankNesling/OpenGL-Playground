@@ -1,19 +1,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <helper.h>
 
-void framebuffer_size_callback2(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
 
-void processInput2(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-int main2()
+int window()
 {
     // GLFW / OpenGL Init
     glfwInit();
@@ -39,13 +30,13 @@ int main2()
     }
 
     glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback2);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // render loop
     while (!glfwWindowShouldClose(window))
     {
         // input
-        processInput2(window);
+        processInput(window);
 
         // rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

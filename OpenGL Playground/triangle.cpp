@@ -1,17 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-
-void framebuffer_size_callback1(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput1(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
+#include <helper.h>
 
 // vertex shader
 const char* vertexShaderSource = "#version 330 core\n"
@@ -37,7 +27,7 @@ const char* fragmentShaderSourceOrange = "#version 330 core\n"
     "}\n\0";
 
 
-int main1()
+int triangle()
 {
     // GLFW / OpenGL Init
     glfwInit();
@@ -63,7 +53,7 @@ int main1()
     }
 
     glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback1);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // vertex shader
     unsigned int vertexShader;
@@ -181,7 +171,7 @@ int main1()
     while (!glfwWindowShouldClose(window))
     {
         // input
-        processInput1(window);
+        processInput(window);
 
         // rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
