@@ -11,6 +11,35 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
+// camera
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+
+// frames
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f; // time of last frame
+
+// input
+void processInputForCamera(GLFWwindow* window)
+{
+    float cameraSpeed = 0.05f;
+ 
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
+
+
 int camera()
 {
     // GLFW / OpenGL Init
@@ -176,6 +205,11 @@ int camera()
     // render loop
     while (!glfwWindowShouldClose(window))
     {
+        // frame speed balancing for movement
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        
         // reset
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -183,7 +217,7 @@ int camera()
         float currentTime = (float)glfwGetTime();
 
         // input
-        processInput(window);
+        processInputForCamera(window);
 
         // rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -195,15 +229,9 @@ int camera()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        // matrices
-
         // view matrix (into view space)
-        const float radius = 10.0f;
-        float camX = sin(glfwGetTime()) * radius;
-        float camZ = cos(glfwGetTime()) * radius;
         glm::mat4 view;
-        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0f, 0.0, 0.0f), glm::vec3(0.0, 1.0, 0.0));
-
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         shader.setMat4("view", view);
 
         // render container
@@ -235,4 +263,3 @@ int camera()
     glfwTerminate();
     return 0;
 }
-
