@@ -74,6 +74,17 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     cameraFront = glm::normalize(direction);
 }
 
+// zooming
+float fov = 45.0f;
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    fov -= (float)yoffset;
+    if (fov < 1.0f)
+        fov = 1.0f;
+    if (fov > 45.0f)
+        fov = 45.0f;
+}
 
 int camera()
 {
@@ -234,12 +245,15 @@ int camera()
 
     // projection matrix (into clip space)
     glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
     shader.setMat4("projection", projection);
 
     // mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
+
+    // zoom
+    glfwSetScrollCallback(window, scroll_callback);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -254,7 +268,6 @@ int camera()
 
         // variables
         float currentTime = (float)glfwGetTime();
-
         // input
         processInputForCamera(window);
 
@@ -267,6 +280,11 @@ int camera()
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
+
+
+        // projection matrix
+        projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
+        shader.setMat4("projection", projection);
 
         // view matrix (into view space)
         glm::mat4 view;
